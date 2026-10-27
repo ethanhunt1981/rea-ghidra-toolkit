@@ -1,40 +1,38 @@
 # Handover
 
-## Ziel und Kontext
+## Target and context
 
-- Datei:
-- Ziel/Artefakt:
+- File:
+- Target / artifact:
 - Hash:
-- Analyse-ID:
-- Datum:
+- Analysis ID:
+- Date:
 
-## Verifizierte Aussagen
+## Verified findings
 
-- [ ] `<Befund>`
-- [ ] `<Befund>`
+- [ ] `<confirmed observation>`
 
-## Plausible, aber nicht bestätigte Aussagen
+## Plausible, not yet-proven findings
 
-- [ ] `<Hypothese>`
-- [ ] `<Hypothese>`
+- [ ] `<hypothesis>`
 
-## Offene Fragen
+## Open questions
 
-| Frage | Suchgrenze |
+| Question | Search range |
 |---|---|
-| `<Frage>` | `<was wurde nicht geprüft>` |
+| `<question>` | `<what was not examined>` |
 
-## Nächste Schritte
+## Next steps
 
-1. `<konkreter nächster Schritt>`
-2. `<konkreter nächster Schritt>`
+1. `<concrete next step>`
+2. `<concrete next step>`
 
-## Verwende Werkzeuge
+## Tools
 
-- REA: `<Version>`
-- Ghidra: `<Version>`
+- REA: `<version>`
+- Ghidra: `<version>`
 
-## Grenzen
+## Limits
 
-- `<Bewusste Begrenzung, z. B. nur statische Analyse>`
-- `<Nicht behandelte Bereich>`
+- `<intentional limitation, e.g. static analysis only>`
+- `<areas intentionally not analyzed>`

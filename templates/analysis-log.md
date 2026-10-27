@@ -1,23 +1,24 @@
-# Analyseprotokoll
+# Analysis log
 
-## Befunde
+## Findings
 
-| ID | Adresse/Offset | Beobachtung | Hypothese | Status | Evidence | Nächste Prüfung |
+| ID | Address / offset | Observation | Hypothesis | Status | Evidence | Next check |
 |---|---|---|---|---|---|---|
-| F001 | `<RVA/VA/Offset>` | `<direkt nachprüfbar>` | `<nur plausible Folgerung>` | `confirmed / plausible / unresolved` | `<Evidence-ID oder Exportpfad>` | `<was noch fehlt>` |
+| F001 | `<RVA/VA/offset>` | `<directly verifiable>` | `<plausible conclusion>` | `confirmed / plausible / unresolved` | `<evidence ID or export path>` | `<what is still missing>` |
 
-## Offene Fragen
+## Open questions
 
-| Frage | Suchgrenze | Warum relevant |
+| Question | Search range | Why it matters |
 |---|---|---|
-| FRG001 | `<was wurde nicht geprüft>` | `<Wirkung auf die Analyse>` |
+| Q001 | `<what was not checked>` | `<effect on the analysis>` |
 
-## Verwendete Werkzeuge
+## Tools
 
-| Werkzeug | Version | Datenbasis | Grenze |
+| Tool | Version | Basis | Limitation |
 |---|---|---|---|
-| REA / Ghidra | `<Version>` | `<Hash oder Export>` | `<was es nicht beweist>` |
+| REA | `<version>` | `<hash or evidence>` | `<what it does not prove>` |
+| Ghidra | `<version>` | `<project or export>` | `<what it does not prove>` |
 
 ## Handover
 
-Nach jeder relevanten Änderung die Datei [`handover.md`](handover.md) aktualisieren.
+When the session ends, update [`handover.md`](handover.md) with the verified, plausible, and unresolved parts.

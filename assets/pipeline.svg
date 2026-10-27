@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 220" style="background-color:#0b0f14">
+  <g fill="none" stroke="#3b4a5a" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M100 135 H210"/>
+    <path d="M270 135 H380"/>
+    <path d="M440 135 H550"/>
+    <path d="M610 135 H720"/>
+  </g>
+  <g fill="#607d8b">
+    <path d="M222 120 h-16 v30 h16 v-15 h-16 v15 z" transform="rotate(180 222 135)"/>
+    <path d="M392 120 h-16 v30 h16 v-15 h-16 v15 z" transform="rotate(180 392 135)"/>
+    <path d="M562 120 h-16 v30 h16 v-15 h-16 v15 z" transform="rotate(180 562 135)"/>
+    <path d="M732 120 h-16 v30 h16 v-15 h-16 v15 z" transform="rotate(180 732 135)"/>
+  </g>
+  <g>
+    <rect x="10" y="70" width="180" height="130" rx="18" fill="#141a21" stroke="#2f4f6f" stroke-width="3"/>
+    <text x="100" y="120" fill="#e6f7f4" font-size="28" font-family="Inter, Roboto, Arial, sans-serif" text-anchor="middle">Identity</text>
+    <text x="100" y="160" fill="#8fa4b8" font-size="22" font-family="Inter, Roboto, Arial, sans-serif" text-anchor="middle">hash + asset type</text>
+  </g>
+  <g>
+    <rect x="230" y="70" width="180" height="130" rx="18" fill="#141a21" stroke="#2f4f6f" stroke-width="3"/>
+    <text x="320" y="120" fill="#e6f7f4" font-size="28" font-family="Inter, Roboto, Arial, sans-serif" text-anchor="middle">Inventory</text>
+    <text x="320" y="160" fill="#8fa4b8" font-size="22" font-family="Inter, Roboto, Arial, sans-serif" text-anchor="middle">sections + imports</text>
+  </g>
+  <g>
+    <rect x="450" y="70" width="180" height="130" rx="18" fill="#141a21" stroke="#2f4f6f" stroke-width="3"/>
+    <text x="540" y="120" fill="#e6f7f4" font-size="28" font-family="Inter, Roboto, Arial, sans-serif" text-anchor="middle">Decompile</text>
+    <text x="540" y="160" fill="#8fa4b8" font-size="22" font-family="Inter, Roboto, Arial, sans-serif" text-anchor="middle">focus per question</text>
+  </g>
+  <g>
+    <rect x="670" y="70" width="180" height="130" rx="18" fill="#141a21" stroke="#2f4f6f" stroke-width="3"/>
+    <text x="760" y="120" fill="#e6f7f4" font-size="28" font-family="Inter, Roboto, Arial, sans-serif" text-anchor="middle">Evidence</text>
+    <text x="760" y="160" fill="#8fa4b8" font-size="22" font-family="Inter, Roboto, Arial, sans-serif" text-anchor="middle">notes + validators</text>
+  </g>
+</svg>

@@ -1,16 +1,16 @@
-# Toolkit als GitMCP-Wissensquelle
+# Toolkit as a GitMCP knowledge source
 
-Dieses Repository ist so aufgebaut, dass ein Agent es ohne Klonen über das Model Context Protocol abrufen kann. Der zugehörige repo-spezifische Endpunkt ist:
+This repository is arranged so that an agent can consume it through the Model Context Protocol without cloning it. The repository-specific endpoint is:
 
 ```text
 https://gitmcp.io/ethanhunt1981/rea-ghidra-toolkit
 ```
 
-Der repo-spezifische Endpunkt ist sinnvoller als der generische `https://gitmcp.io/docs`, weil klar bleibt, dass nur dieses Toolkit gelesen wird.
+The repository-specific endpoint is preferable to the generic `https://gitmcp.io/docs`, because it keeps the lesson target clear.
 
 ## OpenCode
 
-OpenCode verwaltet MCP-Server unter `mcp.servers`. Für dieses Toolkit in allen Projekten gilt:
+OpenCode manages MCP servers under `mcp.servers`. For this toolkit in every project:
 
 ```jsonc
 {
@@ -26,39 +26,39 @@ OpenCode verwaltet MCP-Server unter `mcp.servers`. Für dieses Toolkit in allen 
 }
 ```
 
-Alternativ lässt es sich mit der OpenCode-CLI hinzufügen:
+Alternatively, use the OpenCode CLI:
 
 ```sh
 opencode mcp add rea-ghidra-toolkit --global --url https://gitmcp.io/ethanhunt1981/rea-ghidra-toolkit
 opencode mcp list
 ```
 
-OpenCode beobachtet Konfigurationsdateien und lädt Änderungen automatisch. Ein Neustart ist dafür nicht nötig. Der aktuelle Status kann über `opencode mcp list` oder die Oberfläche `/mcps` geprüft werden.
+OpenCode watches configuration changes and reloads automatically. You do not need to restart it for a config change.
 
-## GitMCP liest vorzugsweise `llms.txt`
+## GitMCP prioritizes `llms.txt`
 
-GitMCP unterstützt prioritär `llms.txt`. Diese Datei ist deshalb der kuratierte Einstieg für Agenten. Halte sie knapp und konkret, nicht als vollständige Kopie der Werkzeugbeschreibungen.
+GitMCP reads `llms.txt` first. Keep that file short and curated. Point it to the most useful docs and tools instead of duplicating their text.
 
-## Datenschutzhinweise
+## Privacy notes
 
-Der Server ist öffentlich. Deshalb gilt:
+The server is public. Treat it accordingly:
 
-- Suche immer mit allgemeingültigen Begriffen, nicht mit namensgebenden Zielspezifischen Strings, Pfaden oder Geheimnissen.
-- Sende niemals decompilierte Zielinhalte, Zugangsdaten oder private Projektinhalte an GitMCP.
-- Zielspezifische Ergebnisse bleiben im privaten Analyseprojekt; dieses Toolkit enthält nur generische Methodik.
+- use broad, generic queries, not target-specific strings, paths, or secrets;
+- never send decompiled target content, credentials, or private project details to GitMCP;
+- target-specific results stay in the private analysis project; this toolkit contains only generic methodology.
 
-## So nutzt ein Agent das Toolkit
+## How an agent should use the toolkit
 
-Erfolgreiche Prompts sind eher breit als zu spezifisch:
+Broad prompts work better than narrow ones:
 
 ```text
-Nutze den MCP-Server rea-ghidra-toolkit. Suche zuerst im Workflow nach REA/Ghidra
-und nach Delphi-VMT-Methoden, bevor du neue Werkzeuge entwirfst.
+Use the MCP server rea-ghidra-toolkit. First look at the workflow for
+REA/Ghidra and Delphi VMT guidance before you invent new tools.
 ```
 
 ```text
-Frage den GitMCP-Server rea-ghidra-toolkit nach evidenzorientierten PE32-/VMT-
-Methoden und nach Ghidra-Headless-Workflows im Kontext meiner Analyse.
+Ask the GitMCP server rea-ghidra-toolkit for evidence-oriented PE32 / VMT
+methods and Ghidra headless workflows in the context of my analysis.
 ```
 
-Der Agent wechselt dann zwischen öffentlichem Methodik-Wissen und privatem Arbeitsverzeichnis des konkreten Ziels.
+An agent should then split its work: public methodology from this toolkit, concrete target data from the private working directory.

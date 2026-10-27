@@ -1,21 +1,21 @@
-# Evidenzorientierter Analyseworkflow
+# Evidence-oriented analysis workflow
 
-Dieser Workflow ist für autorisierte statische Analyse gedacht. Das konkrete Ziel und alle daraus abgeleiteten Daten bleiben im privaten Projekt.
+This workflow is for authorized static analysis. The concrete target and all target-derived data stay in the private analysis project.
 
-## 1. Fragestellung und Grenzen festlegen
+## 1. Set the question and the scope
 
-Formuliere zunächst überprüfbare Fragen, zum Beispiel:
+Start with testable questions, for example:
 
-- Welche Funktion liest einen bestimmten Dateityp?
-- Welche Klasse besitzt ein beobachtetes Verhalten?
-- Welche Datenstruktur wird an einer Funktion verwendet?
-- Ist eine Vermutung durch statische Belege bestätigt oder nur plausibel?
+- Which function reads a specific file format?
+- Which class is responsible for an observed behavior?
+- Which data structure is used by a specific function?
+- Is a hypothesis supported by static evidence, or only plausible?
 
-Lege fest, ob ausschließlich statische Analyse erlaubt ist. Eine Datei zu öffnen, Strings zu extrahieren oder sie zu decompilieren bedeutet nicht, sie auszuführen. Runtime-Schritte sind ein separater Scope.
+Decide whether static analysis is the only permitted mode. Opening a file, extracting strings, or decompiling it does **not** mean executing it. Runtime work is a separate scope.
 
-## 2. Privates Arbeitsverzeichnis und Artefaktidentität
+## 2. Keep the private working directory and artifact identity
 
-Eine einfache private Struktur genügt:
+A simple private structure is enough:
 
 ```text
 analysis/
@@ -26,100 +26,100 @@ tools/
 handover.md
 ```
 
-Sichere vor der Analyse mindestens:
+Record at least:
 
-- eindeutiger Dateiname und Herkunft innerhalb des privaten Projekts
-- Dateigröße und SHA-256
-- Dateityp und gegebenenfalls Architektur
-- Datum und verwendete Werkzeugversionen
+- the full path and source of the artifact inside the private project
+- file size and SHA-256
+- file type, architecture, and any useful compiler/runtime information
+- date, tool versions, and the exact scope
 
-Für PE32-Dateien:
+For PE32 files:
 
 ```powershell
-python -m tools.pe_inventory "C:\analyse\programm.exe" --imports --json
+python -m tools.pe_inventory "C:\analysis\program.exe" --imports --json
 ```
 
-Die Ausgabe gehört in das **private** Projekt, nicht in dieses Toolkit.
+The output belongs in the private project, not in this toolkit.
 
-## 3. Kleinste nützliche Übersicht erzeugen
+## 3. Create the smallest useful overview
 
-Nicht sofort jede Funktion vollständig decompilieren. Beginne mit:
+Do not decompile every function immediately. Start with:
 
-1. PE-/Archiv-Inventar und vorhandenen Metadaten
-2. Sektionen, Imports, Ressourcen und Entry Points
-3. vorhandener REA-Sitzung oder Ghidra-Projekt statt Duplikat
-4. Strings und Referenzen als Einstiegspunkte, nicht als Verhaltensbeweis
+1. PE / archive inventory and available metadata
+2. sections, imports, resources, and entry points
+3. existing REA session or Ghidra project instead of starting a duplicate
+4. strings and references as leads, not as behavioral proof
 
-Bei einem Installer oder Archiv muss zunächst das tatsächlich relevante Mitglied identifiziert werden. Ein Installer ist nicht automatisch das zu decompilierende Programm.
+If the target is an installer or archive, identify the relevant member first. An installer is not necessarily the program you want to decompile.
 
-## 4. Von der Frage zur Funktion
+## 4. Move from question to function
 
-Für jede Frage wird ein konkreter Einstieg gesucht:
+For each question, look for a concrete entry point:
 
-- Import oder API-Aufruf
-- String und dessen Code-Referenzen
-- Ressource oder Dateizugriff
-- Funktionsadresse aus einer früheren Beobachtung
-- VMT-/RTTI-Kandidat bei Delphi
+- an interesting import or API
+- a string and the code that references it
+- a resource or file access path
+- a function address from a previous observation
+- a VMT / RTTI candidate in Delphi
 
-Danach werden gezielt Pseudocode, Calls, Caller und Referenzen geprüft. Erweitere die Analyse nur, wenn eine offene Frage dazu Anlass gibt.
+From there, focus on pseudocode, calls, callers, and references. Expand the analysis only when the open question justifies it.
 
-## 5. Funktionen und Strukturen schrittweise rekonstruieren
+## 5. Reconstruct functions and structures incrementally
 
-Pro untersuchter Funktion im privaten Protokoll festhalten:
+For each examined function, record in the private log:
 
-- SHA-256 des Ziels und Entry-Adresse
-- ursprünglicher und später vergebener Funktionsname
-- Signatur und deren Sicherheit
-- beobachtete Calls und relevante Referenzen
-- verwendete Konstanten, Offsets und String-/Datenreferenzen
-- Evidence-ID oder Exportpfad
-- offene Fragen
+- SHA-256 of the target and the entry address
+- original and later assigned function name
+- signature and the confidence in that signature
+- observed calls and meaningful references
+- constants, offsets, and string/data references
+- evidence ID or private export path
+- open questions
 
-Benenne eine Funktion nicht allein nach einem String oder einem plausiblen Codefragment. Ein Name wie `load_data` ist eine Hypothese, bis Aufrufkontext und Datenfluss ihn stützen.
+Do not name a function solely because a string is nearby. A name like `load_data` remains a hypothesis until call context and data flow support it.
 
-Bei Datenstrukturen zunächst nur bestätigte Felder eintragen. Feldgröße und Typ ergeben sich aus Zugriffsbreite, Vorzeichenverwendung, Zeigerarithmetik und mehreren unabhängigen Verwendungsstellen.
+For data structures, record only confirmed fields first. Field size and type come from access width, signedness, pointer arithmetic, and independent accesses rather than from a single intuition.
 
-## 6. VMT- und RTTI-Hinweise validieren
+## 6. Validate VMT and RTTI information
 
-Bei klassischem 32-bit-Delphi kann [`delphi_vmt.py`](../tools/delphi_vmt.py) Kandidaten liefern. Jeder Treffer bleibt zunächst unbestätigt. Prüfe im Disassembler insbesondere:
+For classic 32-bit Delphi, [`tools/delphi_vmt.py`](../tools/delphi_vmt.py) can provide candidates. Treat every hit as unverified until the disassembler supports it. Check at least:
 
-- Ist die Adresse wirklich der Beginn einer Methodentabelle?
-- Zeigt der Namenszeiger auf einen plausiblen ShortString?
-- Passen Instanzgröße und beobachtete Speicherzugriffe zusammen?
-- Verweisen Methodeneinträge auf tatsächlichen Code?
-- Gibt es konsistente Referenzen auf dieselbe Tabelle?
+- is the address really the start of a method table?
+- does the name pointer resolve to a plausible `ShortString`?
+- does the instance size fit observed object usage?
+- do method entries point to actual code?
+- are there repeated, consistent references to the same table?
 
-Details stehen in [`delphi-pe32.md`](delphi-pe32.md).
+Details are in [`delphi-pe32.md`](delphi-pe32.md).
 
-## 7. Verifikation statt Plausibilität
+## 7. Prefer verification over plausibility
 
-Verwende drei getrennte Aussagearten:
+Keep three separate claim types:
 
-- **Beobachtung:** direkt aus Artefakt oder Werkzeugausgabe belegt.
-- **Inferenz:** aus Beobachtungen abgeleitet, aber nicht eindeutig bewiesen.
-- **Unbekannt:** mit dem bisherigen Scope nicht entschieden.
+- **Observation:** directly supported by the artifact or a tool result.
+- **Inference:** supported by observations, but not uniquely proven.
+- **Unknown:** outside the current scope or not yet decided.
 
-Eine statische Analyse beweist kein tatsächlich ausgeführtes Verhalten. Umgekehrt beweist ein einzelner Lauf nicht alle Pfade. Negative Suchen immer mit Suchraum angeben: „kein Treffer in den untersuchten Funktionen“ statt „existiert nicht“.
+Static analysis does not prove that execution actually happened. Conversely, one runtime run does not prove all paths. Phrase negative results with range: “no hit within the examined functions”, not “it does not exist”.
 
-## 8. Reproduzierbar prüfen
+## 8. Test it reproducibly
 
-Geeignete Prüfungen sind:
+Useful checks include:
 
-- dieselbe Funktion nach erneuter Analyse erneut vergleichen
-- eine zweite unabhängige Referenz oder einen zweiten Aufrufkontext heranziehen
-- Adress- und Offsetberechnungen mit einem kleinen Skript wiederholen
-- Parserhypothesen mit selbst erzeugten Daten testen
-- erwartete Fehlerfälle und Grenzfälle prüfen
+- repeating a decompilation and comparing the result
+- using an independent reference or a second call context
+- re-running address and offset calculations with a local script
+- testing parser hypotheses with synthetic fixtures
+- exercising expected failure and boundary conditions
 
-Ein eigener Parser darf nicht allein mit denselben Annahmen verifiziert werden, aus denen er entstanden ist. Suche mindestens einen unabhängigen Beleg am Ziel.
+Do not verify a parser only with the same assumptions that produced it. Look for at least one independent confirmation in the real target.
 
-## 9. Sauber abschließen
+## 9. Close the session cleanly
 
-- Analysefragen als beantwortet, teilweise beantwortet oder offen markieren.
-- Relevante Evidenz exportieren und private Handover-Datei aktualisieren.
-- Geöffnete REA-Binärsitzung mit `close_binary` schließen.
-- Keine providerverwaltete Ghidra-Datenbank extern verändern.
-- Nur allgemeine, bereinigte und rechtlich unbedenkliche Erkenntnisse ins öffentliche Toolkit übernehmen.
+- mark analysis questions as answered, partly answered, or open
+- export useful evidence and update the private `handover.md`
+- close the REA binary session with `close_binary`
+- do not modify a provider-managed Ghidra database externally
+- only move general, cleaned, and legally safe knowledge into this public toolkit
 
-Für die Übergabe [`templates/handover.md`](../templates/handover.md) verwenden.
+Use [`templates/handover.md`](../templates/handover.md) for the next session.

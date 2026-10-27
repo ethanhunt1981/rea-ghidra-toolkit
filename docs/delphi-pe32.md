@@ -1,97 +1,106 @@
-# Delphi-PE32: VMTs und RTTI sicher untersuchen
+# Delphi PE32: working with VMTs and RTTI
 
-Diese Hinweise betreffen klassische 32-bit-Delphi-Muster. Compilerversion, Linker, Packung und Sprachvarianten können Abweichungen erzeugen. Jede Layout-Annahme muss am konkreten Ziel bestätigt werden.
+These notes describe typical 32-bit Delphi patterns. Compiler version, linker, packing, and language variants can change the layout. Confirm every layout assumption against the concrete binary.
 
-## RVA und VA unterscheiden
+## File offsets, RVAs, and VAs
 
-Bei statischen PE-Werkzeugen werden drei Adressarten benötigt:
+Static PE tools need three distinct address kinds:
 
-- **File Offset:** Position in der Datei.
-- **RVA:** relativ zum Image Base im geladenen Image.
-- **VA:** virtuelle Adresse, bei PE32 typischerweise `Image Base + RVA`.
+- **File offset** — position inside the file.
+- **RVA** — relative virtual address inside the loaded image.
+- **VA** — virtual address, typically `Image Base + RVA` for PE32.
 
-Eine Sektion beschreibt, welche Dateibytes auf welche RVAs abgebildet werden. Nicht jeder virtuelle Bereich besitzt Dateibytes; zero-filled Bereiche lassen sich nicht aus der Datei lesen.
+A section defines how file bytes map to RVAs. Not every virtual range corresponds to file bytes; zero-filled areas cannot be read from the file.
 
-Der mitgelieferte Parser kapselt diese Übersetzung:
+The included parser hides that translation for you:
 
 ```python
 from tools.pe32 import PE32
 
 pe = PE32.from_path("program.exe")
 rva = 0x1234
+
 offset = pe.rva_to_offset(rva)
 value = pe.u32_va(pe.image_base + rva)
 ```
 
-## Häufiges klassisches VMT-Layout
+Keep RVAs and image base in the analysis record. Use VAs mostly as convenient local labels rather than as persistent identifiers.
 
-Bei vielen 32-bit-Delphi-Versionen liegt vor dem positiven Methodentabellenbereich Metadaten. Häufig anzutreffen sind:
+## Common classic VMT layout
 
-| Relativ zum VMT-Start | Typische Bedeutung |
+Many 32-bit Delphi versions place metadata before the positive method table. Frequently observed fields are:
+
+| Offset relative to VMT start | Typical meaning |
 |---|---|
-| `-44` | Zeiger auf den Klassennamen als ShortString |
-| `-40` | Instanzgröße als 32-bit-Wert |
-| `0` | Beginn des positiven Methoden-/Virtual-Method-Bereichs |
+| `-44` | pointer to the class name, stored as a `ShortString` |
+| `-40` | instance size as a 32-bit value |
+| `0` | start of the positive method / virtual-method area |
 
-Ein ShortString beginnt typischerweise mit einem Längenbyte, gefolgt von den Zeichen ohne zwingendes Nullbyte am Ende.
+A `ShortString` typically begins with a length byte, followed by characters. It does not always end with a terminating NUL byte.
 
-Diese Offsets sind **keine universelle Spezifikation**. Sie sind eine überprüfbare Hypothese, die durch Code-Referenzen, Methodenzeiger und Objektverwendung gestützt werden muss.
+These offsets are **not** a universal specification. They are a testable hypothesis that must be supported by references, method pointers, and object usage.
 
-## Einen bekannten Kandidaten prüfen
-
-```powershell
-python -m tools.delphi_vmt "C:\analyse\programm.exe" --vmt 0x00412340
-```
-
-Das Werkzeug prüft unter anderem:
-
-- Ist der Namenszeiger auf file-backed Bytes abbildbar?
-- Ist die ShortString-Länge plausibel?
-- Besteht der Name aus printable ASCII?
-- Ist die Instanzgröße innerhalb einer defensiven Obergrenze?
-- Liegt der erste Methodenzeiger in einer ausführbaren Sektion?
-
-Auch eine erfolgreiche Ausgabe enthält `"verified": false`. Das ist absichtlich so: Strukturelle Plausibilität ersetzt keine Disassemblerprüfung.
-
-## Heuristisch suchen
+## Check a known candidate
 
 ```powershell
-python -m tools.delphi_vmt "C:\analyse\programm.exe" --scan
+python -m tools.delphi_vmt "C:\analysis\program.exe" --vmt 0x00412340
 ```
 
-Standardmäßig werden nur Kandidaten ausgegeben, deren erster Methodenzeiger in eine executable Section zeigt. Weitere, schwächere Kandidaten:
+The tool checks, among other things:
+
+- can the name pointer be mapped to file-backed bytes?
+- is the `ShortString` length plausible?
+- is the class name printable ASCII?
+- is the instance size inside a defensive range?
+- does the first method pointer point into an executable section?
+
+Even a successful output contains `"verified": false`. That is intentional. Structural plausibility is not yet a disassembler validation.
+
+## Heuristic search
 
 ```powershell
-python -m tools.delphi_vmt "C:\analyse\programm.exe" --scan --include-unverified
+python -m tools.delphi_vmt "C:\analysis\program.exe" --scan
 ```
 
-Die Suche ist auf Geschwindigkeit und einfache Prüfbarkeit ausgelegt, nicht auf Vollständigkeit. Sie kann falsche Treffer liefern und ungewöhnliche Layouts übersehen.
+By default, only candidates whose first method pointer points into an executable section are returned. To include weaker candidates:
 
-## Kandidat im Disassembler bestätigen
+```powershell
+python -m tools.delphi_vmt "C:\analysis\program.exe" --scan --include-unverified
+```
 
-1. Negative Metadaten und positiven Methodenbereich gemeinsam betrachten.
-2. Mehrere Methodenzeiger auf tatsächliche Funktionsanfänge prüfen.
-3. Referenzen auf die Tabelle suchen.
-4. Objektallokation und Instanzgröße mit beobachteten Zugriffen vergleichen.
-5. Klassenname, Hierarchie und Methodenverhalten erst danach benennen.
+The search favors speed and cheap validation, not completeness. It can produce false positives and can miss unusual layouts.
 
-Bei vielen Delphi-Objekten steht im ersten Feld ein VMT-Zeiger. Daraus folgt nicht, dass jeder erste 32-bit-Wert einer beliebigen Struktur eine VMT ist.
+## Validate a candidate in the disassembler
 
-## Häufige Fehlinterpretationen
+1. Examine the negative metadata and the positive method area together.
+2. Verify that several method pointers address actual function starts.
+3. Look for repeated references to the same table.
+4. Compare object allocation size and observed memory accesses with the reported instance size.
+5. Only then name the class, hierarchy, or methods.
 
-- **Printable String allein genügt nicht.** Zufällige Bytes können die Heuristik bestehen.
-- **Codeähnliche Bytes sind keine Funktion.** Entry-Adresse und Referenzen prüfen.
-- **Ein Feldoffset ist noch kein Typ.** Zugriffsbreite und Verwendung auswerten.
-- **Imports und Strings liefern Einstiege, kein vollständiges Verhalten.**
-- **Packer verändern die Ausgangslage.** File-backed statische Strukturen können fehlen; keine VMT-Behauptung aus einer leeren Suche ableiten.
-- **ASLR ändert Laufzeitadressen.** Für Dokumentation RVA plus Ziel-Hash zusätzlich zur statischen VA speichern.
+In many Delphi objects, the first field is a VMT pointer. That does not mean any arbitrary 32-bit value at the start of a structure is a VMT.
 
-## Sinnvolle nächste Belege
+## Common misinterpretations
 
-- unabhängige Xrefs auf dieselbe VMT
-- konsistente Methodenaufrufe über dieselben Tabellenoffsets
-- Allokationsgröße und Feldzugriffe passend zur Instanzgröße
-- mehrere Klassen mit konsistentem Layout
-- RTTI-Referenzen, deren eigene Struktur ebenfalls validiert wurde
+- **A printable string is not enough.** Random bytes can pass a simple heuristic.
+- **Code-like bytes are not automatically functions.** Check entry points and references.
+- **A field offset is not a field type.** Derive the type from usage.
+- **Imports and strings are leads, not proofs.**
+- **Packing changes the assumptions.** A lack of file-backed structures is not a disproof.
+- **ASLR changes runtime addresses.** Document RVAs plus the target hash, not just a runtime VA.
 
-Erst diese Kombination macht aus einem Kandidaten eine belastbare Klassen- oder Methodenrekonstruktion.
+## Useful next evidence
+
+- independent references to the same VMT
+- consistent method calls through the same table offsets
+- allocation size and field accesses that match the reported instance size
+- multiple classes with a coherent layout
+- RTTI references that have themselves been validated
+
+Only this combination turns a candidate into a defensible reconstruction.
+
+## Where to go next
+
+- [`docs/workflow.md`](workflow.md) for the overall procedure
+- [`tools/delphi_vmt.py`](../tools/delphi_vmt.py) for a concrete parser
+- [`docs/evidence.md`](evidence.md) for recording the conclusion cleanly

@@ -1,62 +1,62 @@
-# Evidenz, Protokoll und Übergabe
+# Evidence, logs, and handover
 
-Eine Reverse-Engineering-Analyse ist erst dann wiederverwendbar, wenn erkennbar bleibt, was direkt beobachtet und was abgeleitet wurde.
+Reverse-engineering results are only reusable if the difference between what was observed and what was inferred stays visible.
 
-## Aussagearten klar trennen
+## Keep claim levels separate
 
-| Art | Bedeutung | Beispiel |
+| Claim type | Meaning | Example |
 |---|---|---|
-| Beobachtung | Direkt aus Dateibytes, Werkzeugausgabe oder dokumentiertem Runtime-Schritt belegt | „Der Pseudocode der Funktion X zeigt einen Call zum importierten Symbol Y.“ |
-| Inferenz | Mit Beobachtungen begründet, aber nicht eindeutig bewiesen | „Zugriffsbreite und arithmetische Verwendungen passen zu einem 32-bit-Zähler.“ |
-| Unbekannt | Im untersuchten Scope nicht entschieden | „Die Suche umfasste die Sectionen A und B; über C liegt kein Befund vor.“ |
+| Observation | directly supported by file bytes, tool output, or a documented runtime action | “the pseudocode of function X shows a call to imported symbol Y” |
+| Inference | supported by observations, but not uniquely proven | “the access width and arithmetic match a 32-bit counter” |
+| Unknown | outside the current scope, or not yet decided | “the search covered sections A and B; section C has no result yet” |
 
-Vermeide Ausdrücke wie „die App macht X“, wenn die Aussage nur aus statischer Analyse kommt. Präzise ist zum Beispiel „der decompilierte Pfad verarbeitet Y“.
+Avoid broad phrasing such as “the app does X” when the statement comes only from static analysis. More precise is something like “the decompiled path processes X”.
 
-## Einträge im privaten Analyseprotokoll
+## Private analysis log entries
 
-Halte jeden Befund in derselben Struktur fest:
+Use the same structure for each finding:
 
-| Feld | Inhalt |
+| Field | Meaning |
 |---|---|
-| `ID` | Stabile Referenz, zum Beispiel `F001` |
-| `Ziel` | Dateiname, SHA-256 und Version |
-| `Adresse` | Entry-Adresse sowie RVA/Image Base bei VA |
-| `Frage` | Zu prüfende Frage |
-| `Beobachtung` | Direkt nachprüfbare Werkzeug- oder Bytebeobachtung |
-| `Schlussfolgerung` | Aus Beobachtungen abgelegte, nicht bewiesene Ausage |
-| `Name/Hypothese` | Möglicher Funktionsname, Typ, Offset oder VMT-Bedeutung |
-| `Status` | `confirmed`, `plausible` oder `unresolved` |
-| `Evidence` | REA-Evidence-ID oder privater Exportpfad |
-| `Nachprüfung` | Welche unabhängige Prüfung steht aus oder wurde erledigt |
-| `Suchgrenze` | Welche Bereiche ausdrücklich nicht untersucht wurden |
+| `ID` | stable identifier, for example `F001` |
+| `Target` | file name, SHA-256, version |
+| `Address` | entry address and, if useful, RVA / image base |
+| `Question` | the original open question |
+| `Observation` | directly verifiable tool or byte observation |
+| `Conclusion` | inference, not proof |
+| `Name / hypothesis` | possible function name, type, offset, or VMT role |
+| `Status` | `confirmed`, `plausible`, or `unresolved` |
+| `Evidence` | evidence ID or private export path |
+| `Recheck` | what independent verification remains, or what was performed |
+| `Search range` | which areas were intentionally not examined |
 
-## Negative Ergebnisse verwenden
+## Treat negative results as data
 
-Ein „kein Treffer“ ist wertvoll, wenn der Suchraum sichtbar ist:
+A “no hit” is useful only when the search range is visible:
 
-- untersuchte Sektionen, Dateien oder Funktionen
-- verwendete Suchmuster und Groß-/Kleinschreibung
-- geprüfte Referenzen oder Entry-Points
-- Grenzen durch Packung, Dateityp oder verschlüsselte Abschnitte
+- examined sections, files, or functions
+- search patterns and case sensitivity
+- checked references or entry points
+- limits caused by packing, file type, or encrypted regions
 
-Ohne diese Grenze darfst du nicht schreiben, etwas existiere grundsätzlich nicht; nur, dass es im beobachtbaren Scope nicht fundiert wurde.
+Without that range, do not claim that something does not exist in general. Claim only that it was not observed within the documented scope.
 
-## Namen fortlaufend verwenden
+## Keep identifiers meaningful
 
-Ein verifizierter Funktionsname ist wertvoll, weil spätere Referenzen sofort lesbar werden. Wenn eine Hypothese sich widerlegt, benenne die Änderung mit Datum und Grund im Eintrag, damit keine alte Annahme still weiterlebt.
+A verified function name is valuable because later references become readable immediately. If a hypothesis is disproved, update it with date and reason, so the old assumption does not silently continue.
 
-## Übergabe an die nächste Sitzung
+## Hand over the session
 
-Am Ende einer Sitzung gehört in die private `handover.md` zum Beispiel:
+At the end of a session, the private `handover.md` should contain something like:
 
 ```text
 ## Status
-- F002 confirmed: VMT-Hypothese, Xrefs bestätigt.
-- F003 unresolved: Feld bei Offset 0x10 unbekannt.
+- F002 confirmed: VMT hypothesis, cross-references support it.
+- F003 unresolved: field at offset 0x10 is still unknown.
 
-## Nächste Schritte
-- Objektverwendung der Klasse X verfolgen.
-- Schreibzugriffe auf das Feld bei Offset 0x10 prüfen.
+## Next steps
+- Continue tracking the object usage of class X.
+- Check write accesses to the field at offset 0x10.
 ```
 
-Vorlagen stehen in [`templates/analysis-log.md`](../templates/analysis-log.md) und [`templates/handover.md`](../templates/handover.md).
+Ready-to-use templates are in [`templates/analysis-log.md`](../templates/analysis-log.md) and [`templates/handover.md`](../templates/handover.md).

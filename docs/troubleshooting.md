@@ -1,93 +1,93 @@
-# Troubleshooting: REA, Ghidra und PE-Analyse
+# Troubleshooting: REA, Ghidra, and PE analysis
 
-Fehler besser eingrenzen als wiederholen. Prüfe zuerst die gemeldete Ursache und das tatsächlich verwendete Setup. Wenn ein Aufruf scheitert, korrigiere zuerst die Parameter, das Ziel oder die Version; Wiederholfehler sind fast immer ein Hinweis auf ein systemisches Problem, nicht eine Ratenfrage.
+Prefer diagnosis over repetition. If a call fails, correct the cause first. Usually this means fixing the parameter, target, tool schema, or version rather than trying the same command again.
 
-## Ghidra-Installation und Version
+## Ghidra installation and version
 
-### Version korrekt prüfen
+### Check the version correctly
 
-Vertraue nicht dem Verzeichnisnamen. Die Installation wird über die `application.properties` geprüft:
+Do not trust the directory name. Check the installed binary itself:
 
 ```powershell
 Get-Content "$env:GHIDRA_INSTALL_DIR\Ghidra\application.properties" |
   Select-String 'application.version|application.java.min'
 ```
 
-- Fehlt die Datei, zeigt `GHIDRA_INSTALL_DIR` in der Regel auf das falsche Verzeichnis.
-- Erfüllt die Java-Version `application.java.min` nicht, ist zuerst die geforderte Java-Version bereitzustellen.
-- Ein Ghidra-Update kann die minimale Java-Version ändern. Lies daher die Properties der tatsächlich verwendeten Installation.
+- If the file does not exist, `GHIDRA_INSTALL_DIR` usually points to the wrong directory.
+- If the Java version does not satisfy `application.java.min`, provide the required Java version first.
+- A Ghidra update can change the minimum Java version. Read the properties for the exact installation you are using.
 
-### Falsches Installationsverzeichnis
+### Wrong installation directory
 
-`GHIDRA_INSTALL_DIR` muss auf die Ghidra-Wurzel zeigen, also das Verzeichnis, in dem `Ghidra` und `support` liegen. Danach die Provider-Session oder Verbindungsprüfung neu starten.
+`GHIDRA_INSTALL_DIR` must point to the Ghidra root, the directory that contains `Ghidra` and `support`. Then restart the provider session or re-run the connection check.
 
-### Keine allgemeingültige Versionsmatrix annehmen
+### Do not assume a universal version matrix
 
-Welche Ghidra-Version eine REA-Installation akzeptiert, hängt von der installierten REA-Distribution ab. Prüfe daher die Policy oder Dokumentation der tatsächlich verwendeten Version, statt Versionsregeln aus einem anderen Kontext zu übernehmen. Versionsspezifische Hinweise im Repo nur mit Datum und Quelle hinterlegen.
+Which Ghidra version a REA installation accepts depends on the installed REA distribution. Check the policy or documentation of the version actually used. If you document version-specific facts in this repository, record the date and source as well.
 
-## REA-Probleme
+## REA issues
 
-### Provider-Session endet unerwartet
+### Provider session ends unexpectedly
 
-Wenn eine Provider-Session abbricht, kann eine alte Prozessinstanz oder ein ungültiger Zustand übrig bleiben. Vorgehen:
+Do:
 
-1. Zuerst die gemeldete Ursache lesen.
-2. Nur den relevanten alten Analyseprozess beenden, nicht pauschal alle Java-Prozesse.
-3. Dasselbe Ziel erneut mit `open_binary` öffnen.
-4. Wichtige Evidence vor größeren Änderungen exportieren, weil sessionbezogene Annotationen verloren gehen können.
-5. Nach Abschluss sauber mit `close_binary` schließen.
+1. Read the reported root cause first.
+2. Stop only the relevant old analysis process, not all Java processes.
+3. Re-open the same target with `open_binary`.
+4. Export important evidence before making larger changes; session-local annotations can disappear.
+5. Close cleanly with `close_binary` when you are done.
 
-### Unbekannter oder falscher Toolname
+### Unknown or wrong tool name
 
-- Lese zuerst die tatsächlich registrierten Werkzeuge und ihre Schemas.
-- Verwende genau die bereitgestellten Namen und Parameter, nicht vermutete Varianten.
-- Ein Präfix wie `tools.` ist je nach Harness-Integration Teil des Namens oder nicht; die konkrete Laufzeit entscheidet.
+- Read the actual registered tools and schemas first.
+- Use exactly the supplied names and parameters.
+- Some harnesses include a `tools.` prefix, others do not. Do not memorize one pattern and generalize it.
 
-### Timeout oder zu große Antwort
+### Timeout or oversized response
 
-Bei langen Analysen oder umfangreichen Antworten den Call nicht einfach wiederholen:
+Do not simply repeat a large call:
 
-- bereitgestellte Summary- oder Detailparameter nutzen
-- eine zurückgegebene Evidence-ID für eine kleinere Ansicht verwenden
-- die Frage auf eine Funktion, ein Modul oder einen Bereich begrenzen
-- bei Bedarf eine vollständige Analyse einmalig exportieren
+- use available summary or detail parameters
+- use a returned evidence ID for a smaller view
+- narrow the question to one function, module, or region
+- export once if a full result is needed
 
-Kläre zuerst, ob ein Abbruch lokal im Client oder im Server passiert ist. Wiederhole nur dann, wenn bekannt ist, dass die Analyse wirklich nicht abgeschlossen wurde.
+Confirm whether the failure happened locally in the client or on the server side. Only retry when it is clear the analysis did not actually complete.
 
-## Ghidra Headless
+## Ghidra headless
 
-### Programm nicht gefunden
+### Program not found
 
-`-process` bezieht sich auf ein Programm innerhalb des angegebenen Ghidra-Projekts. Für ein neues Ziel nutze `-import`; danach kann die Analyse in späteren Headless-Läufen mit `-process` wiederverwendet werden. Kombiniere nicht schematisch beide Wege.
+`-process` refers to a program inside the specified Ghidra project. For a new target use `-import`; afterwards the analyzed project can be reused with `-process`.
 
-### Skript nicht gefunden
+### Script not found
 
-`-scriptPath` muss das Verzeichnis mit `ExportDecompilation.java` enthalten. Im `-postScript` wird der Skriptname angegeben, gefolgt von den Argumenten. Nach dem Skriptname folgt der Ausgabepfad und optional das Timeout.
+`-scriptPath` must contain `ExportDecompilation.java`. In `-postScript`, the script name is followed by its arguments. After the script name, provide the output path and optionally the timeout.
 
-### Java-Fehler
+### Java errors
 
-Prüfe zuerst `application.java.min` und die tatsächlich verwendete `java -version`. Nach einer Java-Installation zuerst die Umgebungsvariablen und anschließend den Headless-Aufruf neu prüfen.
+First check `application.java.min` and the actual `java -version`. After installing or replacing Java, re-check the environment and/or run the call with a clean environment.
 
-## PE-Analyseprobleme
+## PE analysis problems
 
-### Eingabe wird nicht als PE32 akzeptiert
+### Input is not accepted as PE32
 
-- Prüfe zuerst Dateigröße und Hash. Downloads können früh unterbrochen worden sein.
-- Stelle sicher, dass es sich um einen 32-bit-PE-Optional-Header mit Magic `0x10b` handelt. 64-bit-PE-Dateien werden vom vorhandenen Parser bewusst abgelehnt.
-- Ein `MZ`-Beginn allein macht noch keine PE-Struktur gültig.
+- Verify file size and hash; downloads can be truncated.
+- Confirm that the optional header uses the PE32 magic `0x10b`. 64-bit PE files are intentionally rejected by this parser.
+- An `MZ` marker alone does not make the file a valid PE.
 
-### Imports fehlen oder werden übersehen
+### Imports are missing or appear partial
 
-- Verzweigungen wie Bound-Imports, Ordinal-Imports oder gepackte Abschnitte können die übliche Importtabelle anders darstellen.
-- Dieses Werkzeug liest nur die Directory-Tabelle und Standard-Thunks. Spezialformen ersetzt der vorhandene Parser nicht.
-- Bei einem Installationspaket zuerst die Bestandteile und nicht nur das große Paket prüfen.
+- Bound imports, ordinal-only imports, forwarding entries, or packed sections can make the import table look different.
+- This tool reads only the standard directory and thunk forms. It does not replace a complete import-table reader.
+- If the target is an installer package, inspect its members first rather than only the outer package.
 
-### VMT-Scan liefert nichts
+### VMT scan produces no result
 
-Mögliche Ursachen:
+Possible reasons:
 
-- Der Compiler nutzt ein anderes VMT-/RTTI-Layout.
-- Packer oder verschlüsselte Abschnitte verhindern einfache Datei-Prüfungen.
-- Es gibt schlicht keine solchen Kandidaten im betrachteten Bereich.
+- the compiler uses a different VMT / RTTI layout
+- packing or encrypted sections prevent simple file-backed checks
+- there really are no such candidates in the examined range
 
-Daher ist „kein Scanresultat“ kein Beweis gegen das Vorhandensein von Klasseninformationen. Es bleibt eine begrenzte Beobachtung innerhalb des untersuchten Scopes.
+That output remains a scoped observation, not a disproof.

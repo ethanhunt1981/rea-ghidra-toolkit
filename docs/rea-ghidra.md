@@ -1,56 +1,65 @@
-# REA und Ghidra kombinieren
+# Combining REA and Ghidra
 
-REA liefert den agentenseitigen Zugriff auf Analysewerkzeuge und Evidenz. Ghidra stellt bei nativen PE-Zielen typischerweise Disassemblierung und Decompilierung bereit. Die konkret verfügbaren Werkzeuge und Schemas der verbundenen REA-Version sind immer maßgeblich.
+REA provides agent-side access, evidence handling, and focused tool calls. Ghidra supplies disassembly and decompilation for native PE targets. Always follow the schemas and tools that the connected REA version actually exposes.
 
-## REA: fokussierte native Analyse
+## REA: focused native analysis
 
-### 1. Ziel öffnen
+### 1. Open the correct target
 
-Für ein natives Binary `open_binary` mit dem vom Benutzer bestimmten Originalpfad verwenden. Keine fremde Datei aufgrund eines ähnlichen Namens auswählen und keine bereits geöffnete Sitzung grundlos duplizieren.
+Use `open_binary` on the exact target path supplied by the user. Do not choose a different file because its name looks similar, and do not open a duplicate session for a target you are already analyzing.
 
 ```text
-open_binary(path = "<absoluter privater Zielpfad>")
+open_binary(path = "<absolute private target path>")
 binary_overview()
 ```
 
-Die Übersicht hilft bei Identität, Architektur und verfügbarer Analyse. Eine große Datei nicht wiederholt komplett öffnen, nur weil eine Detailfrage neu ist.
+The overview answers:
 
-### 2. Von einem Einstiegspunkt aus arbeiten
+- is it a known supported binary/container?
+- which architecture are we looking at?
+- what analysis methods are actually available?
 
-Je nach vorhandenem Tool-Angebot werden Strings, Funktionen, Referenzen und Calls kombiniert. Typische REA-Operationen in aktuellen Native-Workflows sind:
+Do not re-open a large target just because a new detail question appeared.
 
-- `procedure_pseudo_code` für eine bestimmte Prozedur
-- `procedure_callers` für eingehende Calls
-- `procedure_references` für weitere Referenzen
-- Funktions-/String-Suche zur Einstiegssuche
+### 2. Work from an entry point
 
-Vor einem Aufruf das tatsächlich registrierte Schema lesen. Keine Parameter oder Werkzeugnamen raten. Bei einem ungültigen Aufruf zuerst den gemeldeten Fehler korrigieren, nicht denselben Call unverändert wiederholen.
+Depending on the available tools, combine strings, functions, references, and calls. Common useful operations are:
 
-### 3. Evidenz erhalten
+- `procedure_pseudo_code`
+- `procedure_callers`
+- `procedure_references`
+- string or function search tools
 
-Zu jeder wichtigen Aussage gehören Ziel-Hash, Prozeduradresse und die zurückgegebene Evidence-ID beziehungsweise ein privater Export. Werkzeuglimits und fehlende Coverage werden mitprotokolliert.
+Read the actual registered schema before a call. Do not invent parameter names or tool names. If a call fails, correct the cause first; repeating the same call is usually not useful.
 
-Eine große Ausgabe nicht erneut erzeugen, wenn eine retained Evidence-ID eine kleinere Ansicht erlaubt. Zusammenfassung, Seiten oder einzelne Module verwenden, sofern die verbundene Version diese Operationen anbietet.
+### 3. Keep evidence
 
-### 4. Sitzung beenden
+For each important claim, keep the:
 
-Nach Abschluss der Untersuchung:
+- target hash
+- address and address kind
+- returned evidence ID or private export path
+- tool version and command
+
+If a large render or response is available in summary form, prefer that over repeating the full call. Export only what you need.
+
+### 4. Close the session
 
 ```text
 close_binary()
 ```
 
-Vorher benötigte Evidenz sichern. Eine providerverwaltete Ghidra-Datenbank nicht parallel mit externen Skripten verändern.
+Save the evidence first. Do not modify a provider-managed Ghidra database in parallel with external scripts.
 
-## Ghidra Headless als Fallback oder Batch-Schritt
+## Ghidra headless as a fallback or batch step
 
-Voraussetzungen:
+Prerequisites:
 
-- `GHIDRA_INSTALL_DIR` zeigt auf das Wurzelverzeichnis der entpackten Ghidra-Release.
-- Die Java-Version erfüllt `application.java.min` dieser Installation.
-- Das Skriptverzeichnis enthält [`ExportDecompilation.java`](../ghidra/scripts/ExportDecompilation.java).
+- `GHIDRA_INSTALL_DIR` points at the Ghidra root directory.
+- the installed Java version satisfies `application.java.min`.
+- the script directory contains [`ExportDecompilation.java`](../ghidra/scripts/ExportDecompilation.java).
 
-Installation und Java-Version prüfen:
+Check the installation and Java version:
 
 ```powershell
 Get-Content "$env:GHIDRA_INSTALL_DIR\Ghidra\application.properties" |
@@ -58,9 +67,9 @@ Get-Content "$env:GHIDRA_INSTALL_DIR\Ghidra\application.properties" |
 java -version
 ```
 
-Dem Verzeichnisnamen einer Ghidra-Installation nicht vertrauen; die `application.properties` ist entscheidend.
+Do not trust the folder name of a Ghidra installation. The `application.properties` is decisive.
 
-### Neues Projekt importieren und exportieren
+### First import and export
 
 ```powershell
 & "$env:GHIDRA_INSTALL_DIR\support\analyzeHeadless.bat" `
@@ -70,9 +79,9 @@ Dem Verzeichnisnamen einer Ghidra-Installation nicht vertrauen; die `application
   -postScript ExportDecompilation.java "C:\re-work\out\decompilation.txt" 60
 ```
 
-Das optionale `60` ist das Decompiler-Timeout pro Funktion in Sekunden.
+The optional `60` is the decompiler timeout in seconds per function.
 
-### Bereits analysiertes Projekt erneut verarbeiten
+### Re-open an already analyzed project
 
 ```powershell
 & "$env:GHIDRA_INSTALL_DIR\support\analyzeHeadless.bat" `
@@ -82,14 +91,19 @@ Das optionale `60` ist das Decompiler-Timeout pro Funktion in Sekunden.
   -postScript ExportDecompilation.java "C:\re-work\out\decompilation.txt" 60
 ```
 
-`-noanalysis` ist hier sinnvoll, weil das vorhandene Projekt bereits analysiert wurde. Bei einem neuen Import nicht einfach übernehmen.
+`-noanalysis` is useful here because the project has already been analyzed. For a newly imported target do not assume the same mode.
 
-### Ausgabe richtig verwenden
+### Use the output responsibly
 
-Das Skript schreibt pro nicht externer Funktion:
+The script writes one UTF-8 text file containing, per non-external function:
 
-- Funktionsname und Entry-Adresse
-- aktuelle Signatur
-- Decompiler-C-Ausgabe oder Fehlermeldung
+- function name
+- entry address
+- current signature
+- decompiled C, or a clear error message
 
-Die Ausgabe kann groß sein und enthält zielspezifischen Pseudocode. Sie bleibt im privaten Projekt und wird nicht in das Toolkit oder in GitMCP-Suchanfragen kopiert. Für eine einzelne offene Frage ist die fokussierte REA-Analyse meist effizienter als ein vollständiger Export.
+Output can be large and contains target-specific pseudocode. Keep it in the private project; do not copy it into GitMCP queries or into this toolkit.
+
+## Practical choice
+
+Use REA for a single sharp question and direct evidence interpretation. Use Ghidra headless for repeatable batch exports or when REA is unavailable. In most investigations you will need both at different times.

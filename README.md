@@ -1,86 +1,139 @@
 # REA + Ghidra Toolkit
 
-Wiederverwendbare Workflows und kleine Werkzeuge für die **autorisierte statische Analyse** nativer Programme mit [REA](https://github.com/morluto/rea) und [Ghidra](https://github.com/NationalSecurityAgency/ghidra). Das Repository ist als Wissensquelle für GitMCP aufgebaut.
+<p align="center">
+  <img src="assets/pipeline.svg" alt="REA + Ghidra Toolkit pipeline" width="840">
+</p>
 
-## Zweck und Abgrenzung
+<p align="center">
+  <a href="https://gitmcp.io/ethanhunt1981/rea-ghidra-toolkit">
+    <img alt="GitMCP docs" src="https://img.shields.io/badge/GitMCP-docs-0f88eb">
+  </a>
+  <a href="LICENSE">
+    <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
+  </a>
+  <a href="https://www.python.org/downloads/">
+    <img alt="Python" src="https://img.shields.io/badge/Python-3.10%2B-informational">
+  </a>
+  <a href="https://github.com/NationalSecurityAgency/ghidra">
+    <img alt="Ghidra" src="https://img.shields.io/badge/Ghidra-headless-orange">
+  </a>
+  <a href="https://github.com/morluto/rea">
+    <img alt="REA" src="https://img.shields.io/badge/REA-agents-blueviolet">
+  </a>
+</p>
 
-Dieses Repository beantwortet vor allem:
+---
 
-- Wie beginne ich eine nachvollziehbare PE-/Delphi-Analyse?
-- Wie kombiniere ich REA, Ghidra und eigene Skripte, ohne Schlussfolgerungen als Fakten zu behandeln?
-- Wie exportiere und dokumentiere ich Ergebnisse so, dass eine spätere Sitzung darauf aufbauen kann?
-- Welche typischen Setup- und Analysefehler kann ich vermeiden?
+A small, dependency-light toolkit for **authorized static analysis** of native binaries with **REA** and **Ghidra**. It is intentionally built as a reusable knowledge base for agents, not as a dumping ground for a specific target.
 
-**Nicht hierhin gehören** Originalbinaries, Installationspakete, Decompilate, proprietäre Formatspezifikationen, projektspezifische Nachimplementierungen, Zugangsdaten oder private Pfade. Solche Inhalte bleiben im jeweiligen privaten Analyseprojekt.
+**Think in two layers**
 
-## Für Agenten: Einstieg über GitMCP
+- This repository contains only generic methods, tools, and synthetic tests.
+- Every target-specific artifact, decompilation, or private result stays in the private analysis project.
 
-Repo-spezifischer MCP-Endpunkt:
+## Why this exists
+
+You want to avoid rebuilding the same reverse-engineering workflow from scratch every time. This toolkit answers:
+
+- How do I start a PE / Delphi analysis in a traceable way?
+- How do I combine REA, Ghidra, and small local tools without treating inferences as facts?
+- How do I export and document results so a later session can continue?
+- Which mistakes should be avoided early instead of discovered late?
+
+## Repository layout
 
 ```text
-https://gitmcp.io/ethanhunt1981/rea-ghidra-toolkit
+.
+├── docs/
+│   ├── workflow.md
+│   ├── rea-ghidra.md
+│   ├── delphi-pe32.md
+│   ├── evidence.md
+│   ├── troubleshooting.md
+│   └── gitmcp.md
+├── tools/
+│   ├── pe32.py
+│   ├── pe_inventory.py
+│   └── delphi_vmt.py
+├── ghidra/
+│   └── scripts/ExportDecompilation.java
+├── templates/
+│   ├── analysis-log.md
+│   └── handover.md
+├── tests/
+├── assets/
+├── AGENTS.md
+├── LICENSE
+└── llms.txt
 ```
 
-Beispielprompt in einem privaten Analyseprojekt:
+## What you get
 
-```text
-Nutze für diese autorisierte Analyse zuerst den GitMCP-Server
-rea-ghidra-toolkit. Lies den Workflow und suche passende REA-/Ghidra- und
-Delphi-Hinweise, bevor du neue Werkzeuge entwickelst. Übernimm nur generische
-Methoden; speichere alle zielspezifischen Ergebnisse ausschließlich lokal im
-privaten Projekt.
-```
+| Area | What is inside | Good next read |
+|---|---|---|
+| 🧭 `docs/` | Evidence-oriented, reproducible workflows and validation rules | [`workflow.md`](docs/workflow.md) |
+| 🩺 `tools/` | Read-only PE32 inventory and VMT helpers | [`tools/pe_inventory.py`](tools/pe_inventory.py) |
+| 🧰 `ghidra/` | Headless export helper | [`ExportDecompilation.java`](ghidra/scripts/ExportDecompilation.java) |
+| 🫙 `templates/` | Private analysis and handover templates | [`templates/analysis-log.md`](templates/analysis-log.md) |
+| 🧪 `tests/` | Synthetic, dependency-light tests | [`tests/test_pe32.py`](tests/test_pe32.py) |
 
-GitMCP liest bevorzugt [`llms.txt`](llms.txt). Diese Datei ist deshalb der kuratierte Einstieg für Agenten. Die Einrichtung in OpenCode steht in [`docs/gitmcp.md`](docs/gitmcp.md).
-
-## Inhalt
-
-| Pfad | Verwendung |
-|---|---|
-| [`docs/workflow.md`](docs/workflow.md) | Vollständiger, evidenzorientierter Analyseworkflow |
-| [`docs/rea-ghidra.md`](docs/rea-ghidra.md) | REA-Werkzeugfolge und Ghidra-Headless-Fallback |
-| [`docs/delphi-pe32.md`](docs/delphi-pe32.md) | PE32-, Delphi-VMT- und RTTI-Hinweise |
-| [`docs/evidence.md`](docs/evidence.md) | Beobachtungen, Hypothesen und Unbekannte sauber trennen |
-| [`docs/troubleshooting.md`](docs/troubleshooting.md) | Setup-, Provider- und Analysefehler eingrenzen |
-| [`docs/gitmcp.md`](docs/gitmcp.md) | Toolkit als dauerhafte MCP-Wissensquelle verwenden |
-| [`ghidra/scripts/ExportDecompilation.java`](ghidra/scripts/ExportDecompilation.java) | Nicht externe Funktionen in eine UTF-8-Datei decompilieren |
-| [`tools/pe_inventory.py`](tools/pe_inventory.py) | PE32-Hash, Header, Sektionen und optionale Imports ausgeben |
-| [`tools/pe32.py`](tools/pe32.py) | Read-only Kernel: RVA-/VA-Umrechnung und PE32-Grunddaten |
-| [`tools/delphi_vmt.py`](tools/delphi_vmt.py) | Klassische 32-bit-Delphi-VMTs prüfen oder heuristisch suchen |
-| [`templates/analysis-log.md`](templates/analysis-log.md) | Vorlage für das private Analyseprotokoll |
-| [`templates/handover.md`](templates/handover.md) | Vorlage für eine spätere Sitzung oder Übergabe |
-
-## Lokale Werkzeuge
-
-Voraussetzung: Python 3.10 oder neuer. Die Python-Werkzeuge verwenden nur die Standardbibliothek und führen die untersuchte Datei **nicht** aus.
+## Quickstart
 
 ```powershell
-# Im Wurzelverzeichnis dieses Repositories
-python -m tools.pe_inventory "C:\analyse\programm.exe"
-python -m tools.pe_inventory "C:\analyse\programm.exe" --imports --json
+# From the repository root
+python -m tools.pe_inventory "C:\analysis\program.exe"
+python -m tools.pe_inventory "C:\analysis\program.exe" --imports --json
 
-# Einen bereits bekannten VMT-Kandidaten an seiner virtuellen Adresse prüfen
-python -m tools.delphi_vmt "C:\analyse\programm.exe" --vmt 0x00412340
+# Check a known VMT candidate
+python -m tools.delphi_vmt "C:\analysis\program.exe" --vmt 0x00412340
 
-# Heuristisch nach Kandidaten suchen; Ergebnisse immer im Disassembler prüfen
-python -m tools.delphi_vmt "C:\analyse\programm.exe" --scan
+# Heuristic search; always validate candidates in a disassembler
+python -m tools.delphi_vmt "C:\analysis\program.exe" --scan
 ```
 
-Die Werkzeuge sind bewusst klein und read-only. Sie ersetzen weder Ghidra noch eine Validierung am konkreten Compiler-/Binary-Muster.
-
-## Tests
-
-Alle Tests erzeugen ihre PE-Daten synthetisch und benötigen keine Drittanbieterdateien:
+Run the synthetic test suite:
 
 ```powershell
 python -m unittest discover -v
 ```
 
-## Grundprinzip
+## GitMCP
 
-**Erst Identität und Beobachtungen sichern, dann gezielt decompilieren, danach Hypothesen verifizieren.** Ein plausibler Funktionsname, String oder VMT-Kandidat ist noch kein Verhaltensbeweis. Die Vorlagen helfen, diesen Unterschied auch über Sitzungsgrenzen hinweg sichtbar zu halten.
+This repository is designed to be used with <https://gitmcp.io/ethanhunt1981/rea-ghidra-toolkit>.
 
-## Lizenz
+OpenCode / typical agent setup:
 
-Das Repository steht unter der [MIT-Lizenz](LICENSE). Damit ist die Nutzung der enthaltenen Methodik und Werkzeuge erlaubt. Die Lizenz ist keine Freigabe von Originalbinaries, decompilierten Zielspezifikationen, fremd geschütztem Material oder privat gespeicherten Analyseergebnissen.
+```jsonc
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "servers": {
+      "rea-ghidra-toolkit": {
+        "type": "remote",
+        "url": "https://gitmcp.io/ethanhunt1981/rea-ghidra-toolkit"
+      }
+    }
+  }
+}
+```
 
+OpenCode CLI command:
+
+```sh
+opencode mcp add rea-ghidra-toolkit --global --url https://gitmcp.io/ethanhunt1981/rea-ghidra-toolkit
+opencode mcp list
+```
+
+<p align="center">
+  <a href="https://gitmcp.io/ethanhunt1981/rea-ghidra-toolkit">
+    <img alt="GitMCP" src="https://img.shields.io/badge/Docs-rea--ghidra--toolkit-0f88eb">
+  </a>
+</p>
+
+## Core rule
+
+> **Observation, inference, and unknown are three different things.** A plausible name, string, or VMT candidate is not yet a behavioral proof. The templates are here to keep that distinction visible across sessions.
+
+## License
+
+This repository is licensed under the [MIT License](LICENSE). The license covers the included methodology and tooling only. It does not cover original binaries, target-specific specifications, third-party protected material, or private analysis results.
