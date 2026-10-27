@@ -17,7 +17,7 @@ Native, unmanaged Windows binaries in PE32 format — with dedicated guidance fo
 ## Documentation
 
 - [Analysis workflow](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/docs/workflow.md): order of artifact identity, inventory, focused decompilation, reconstruction, and verification.
-- [REA + Ghidra](https://github.com/eethanhunt1981/rea-ghidra-toolkit/blob/main/docs/rea-ghidra.md): focused REA workflow and Ghidra headless fallback.
+- [REA + Ghidra](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/docs/rea-ghidra.md): focused REA workflow and Ghidra headless fallback.
 - [Delphi PE32](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/docs/delphi-pe32.md): VMT and RTTI care, address kinds, and safe handling of heuristics.
 - [Evidence](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/docs/evidence.md): claim ledger, address clarity, coverage, and handover.
 - [Troubleshooting](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/docs/troubleshooting.md): diagnose without repeating a failed call.
