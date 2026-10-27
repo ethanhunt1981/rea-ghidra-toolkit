@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.ethanhunt1981/rea-ghidra-toolkit",
+  "title": "REA + Ghidra Toolkit",
+  "description": "Evidence-oriented REA + Ghidra static-analysis workflows, read-only PE32 and Delphi VMT tools.",
+  "websiteUrl": "https://github.com/ethanhunt1981/rea-ghidra-toolkit",
+  "repository": {
+    "url": "https://github.com/ethanhunt1981/rea-ghidra-toolkit",
+    "source": "github"
+  },
+  "version": "1.0.0",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://gitmcp.io/ethanhunt1981/rea-ghidra-toolkit/mcp"
+    }
+  ]
+}
