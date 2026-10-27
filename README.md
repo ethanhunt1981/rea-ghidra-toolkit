@@ -1,7 +1,7 @@
 # REA + Ghidra Toolkit
 
 <p align="center">
-  <img src="assets/pipeline.svg" alt="REA + Ghidra Toolkit pipeline" width="840">
+  <img src="assets/banner.svg" alt="REA + Ghidra Toolkit — evidence-first analysis banner" width="840">
 </p>
 
 <p align="center">

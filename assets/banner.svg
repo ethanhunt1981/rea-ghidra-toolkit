@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="280" viewBox="0 0 1280 280" role="img" aria-labelledby="btitle">
+  <title id="btitle">REA + Ghidra Toolkit</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d1117"/>
+      <stop offset="1" stop-color="#141d2b"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#58a6ff"/>
+      <stop offset="1" stop-color="#3fb950"/>
+    </linearGradient>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="1.5" cy="1.5" r="1.4" fill="#ffffff" opacity="0.05"/>
+    </pattern>
+  </defs>
+
+  <!-- background -->
+  <rect x="1" y="1" width="1278" height="278" rx="18" fill="url(#bg)" stroke="#30363d"/>
+  <rect x="1" y="1" width="1278" height="278" rx="18" fill="url(#dots)"/>
+  <ellipse cx="1011" cy="150" rx="280" ry="120" fill="#58a6ff" opacity="0.06"/>
+
+  <!-- left column -->
+  <text x="72" y="86" fill="#58a6ff" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="17" font-weight="600" letter-spacing="4">AUTHORIZED STATIC ANALYSIS</text>
+  <text x="72" y="144" fill="#f0f6fc" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="54" font-weight="700">REA <tspan fill="#3fb950">+</tspan> Ghidra Toolkit</text>
+  <rect x="72" y="156" width="96" height="4" rx="2" fill="url(#accent)"/>
+  <text x="72" y="188" fill="#8b949e" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="20">Evidence-first workflows, read-only tools, GitMCP-ready docs.</text>
+
+  <!-- chips -->
+  <g font-family="Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="15" fill="#c9d1d9" text-anchor="middle">
+    <rect x="72" y="214" width="56" height="36" rx="18" fill="#161b22" stroke="#30363d"/>
+    <text x="100" y="237">REA</text>
+    <rect x="140" y="214" width="140" height="36" rx="18" fill="#161b22" stroke="#30363d"/>
+    <text x="210" y="237">Ghidra headless</text>
+    <rect x="292" y="214" width="126" height="36" rx="18" fill="#161b22" stroke="#30363d"/>
+    <text x="355" y="237">PE32 · Delphi</text>
+    <rect x="430" y="214" width="76" height="36" rx="18" fill="#161b22" stroke="#30363d"/>
+    <text x="468" y="237">GitMCP</text>
+  </g>
+
+  <!-- terminal illustration -->
+  <rect x="806" y="64" width="410" height="172" rx="14" fill="#0a0d12" stroke="#30363d"/>
+  <circle cx="828" cy="79" r="5.5" fill="#ff5f57"/>
+  <circle cx="846" cy="79" r="5.5" fill="#febc2e"/>
+  <circle cx="864" cy="79" r="5.5" fill="#28c840"/>
+  <line x1="806" y1="94" x2="1216" y2="94" stroke="#30363d"/>
+  <g font-family="Consolas, Menlo, DejaVu Sans Mono, monospace" font-size="15">
+    <text x="826" y="124" fill="#7ee787">$ python -m tools.pe_inventory \</text>
+    <text x="826" y="148" fill="#8b949e">    program.exe --imports --json</text>
+    <text x="826" y="178" fill="#79c0ff">$ python -m tools.delphi_vmt --scan</text>
+    <text x="826" y="204" fill="#8b949e">    VMT 0x00412340  verified:false</text>
+    <rect x="1126" y="192" width="9" height="18" fill="#58a6ff"/>
+  </g>
+</svg>
