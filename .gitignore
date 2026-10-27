@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Generated analysis output
+out/
+output/
+*.log
+
+# Ghidra projects and generated files
+*.gpr
+*.rep/
+*.lock
+*.class
+
+# Never accidentally add target binaries
+*.exe
+*.dll
+*.sys
+*.bin
+*.rom
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

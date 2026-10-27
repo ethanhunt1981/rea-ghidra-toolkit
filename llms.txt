@@ -1,0 +1,32 @@
+# REA + Ghidra Toolkit
+
+> Generische, wiederverwendbare Methoden und Werkzeuge für autorisierte statische Analyse mit REA und Ghidra. Zielbinaries, Decompilate, proprietäre Spezifikationen und private Projektergebnisse gehören nicht in dieses Repository.
+
+## Start für Agenten
+
+1. Lies zuerst den Workflow und wähle danach nur die relevante Spezialseite.
+2. Arbeite mit dem tatsächlich bereitgestellten Ziel und den tatsächlich verfügbaren MCP-Werkzeugen; erfinde keine Tool-Namen oder Analyseergebnisse.
+3. Trenne Beobachtung, Inferenz und Unbekannte. VMT-Treffer, Strings und plausibler Pseudocode sind keine vollständige Verhaltensverifikation.
+4. Verwende generische Suchbegriffe gegenüber GitMCP und übertrage keine privaten Zielinhalte oder Geheimnisse in Suchanfragen.
+5. Schreibe neue allgemeine Erkenntnisse nur nach Bereinigung und Prüfung zurück in dieses Toolkit. Zielspezifische Ergebnisse bleiben im privaten Projekt.
+
+## Dokumentation
+
+- [Analyseworkflow](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/docs/workflow.md): Reihenfolge von Artefaktidentität, Inventar, fokussierter Decompilierung, Strukturrekonstruktion und Verifikation.
+- [REA und Ghidra](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/docs/rea-ghidra.md): REA-Werkzeugfolge, Ghidra-Headless-Fallback und Exportskript.
+- [Delphi PE32](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/docs/delphi-pe32.md): VMT-/RTTI-Hinweise, Adressübersetzung und sicherer Umgang mit Heuristiken.
+- [Evidenz und Dokumentation](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/docs/evidence.md): Befundledger, Adressen, Coverage und Handover.
+- [Troubleshooting](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/docs/troubleshooting.md): Ghidra-/JDK-/Provider-Probleme ohne blindes Wiederholen eingrenzen.
+- [GitMCP und OpenCode](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/docs/gitmcp.md): repo-spezifische Einbindung und sinnvolle Prompts.
+
+## Werkzeuge
+
+- [PE32-Inventory](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/tools/pe_inventory.py): Read-only-Hash, Header, Sektionen und optionale Imports; Standardbibliothek.
+- [Delphi-VMT](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/tools/delphi_vmt.py): Einzelkandidat prüfen oder heuristisch scannen; jede Ausgabe bleibt bis zur Disassemblerprüfung unbestätigt.
+- [PE32-Kernparser](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/tools/pe32.py): RVA-/VA-Übersetzung und grundlegende PE32-Strukturen für eigene Analyseskripte.
+- [Ghidra-Export](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/ghidra/scripts/ExportDecompilation.java): Nicht externe Funktionen mit Entry-Adresse und Signatur in eine UTF-8-Datei exportieren.
+
+## Private Projektvorlagen
+
+- [Analyseprotokoll](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/templates/analysis-log.md)
+- [Handover](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/templates/handover.md)
