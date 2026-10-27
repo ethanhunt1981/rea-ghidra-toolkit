@@ -2,6 +2,10 @@
 
 > Generic, reusable methods and tools for authorized static analysis with REA and Ghidra. This repository should not receive target binaries, decompiled artifacts, proprietary specifications, private results, or secrets.
 
+## What this is for
+
+Native, unmanaged Windows binaries in PE32 format — with dedicated guidance for classic 32-bit Delphi (VMT / RTTI). Not for managed runtimes (.NET / Java), not for PE32+ 64-bit images, not for execution-based debugging or malware triage. Static analysis only; observation, inference, and unknown stay separated.
+
 ## Start here for agents
 
 1. Read the workflow first, then use only the relevant specialized page.

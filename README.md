@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://gitmcp.io/ethanhunt1981/rea-ghidra-toolkit">
-    <img alt="GitMCP docs" src="https://img.shields.io/badge/GitMCP-docs-0f88eb">
+    <img alt="GitMCP docs" src="https://img.shields.io/endpoint?url=https://gitmcp.io/badge/ethanhunt1981/rea-ghidra-toolkit">
   </a>
   <a href="LICENSE">
     <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
@@ -30,6 +30,16 @@ A small, dependency-light toolkit for **authorized static analysis** of native b
 
 - This repository contains only generic methods, tools, and synthetic tests.
 - Every target-specific artifact, decompilation, or private result stays in the private analysis project.
+
+## When this applies
+
+The toolkit is aimed at **native, unmanaged PE32 binaries on Windows**:
+
+- classic **32-bit Delphi applications** have dedicated guidance ([VMT / RTTI](docs/delphi-pe32.md));
+- other PE32 code (e.g. C/C++ components) works with the [read-only inventory](tools/pe_inventory.py) and the [headless Ghidra export](docs/rea-ghidra.md);
+- analysis is [static only](docs/workflow.md#1-set-the-question-and-the-scope); every claim is verified before it is treated as a finding.
+
+**Not a fit for** managed runtimes (.NET / Java), PE32+ 64-bit images (the quick parser is deliberately PE32-only), executing code as a debugging workflow, or any target without solid legal authorization.
 
 ## Why this exists
 
@@ -126,7 +136,7 @@ opencode mcp list
 
 <p align="center">
   <a href="https://gitmcp.io/ethanhunt1981/rea-ghidra-toolkit">
-    <img alt="GitMCP" src="https://img.shields.io/badge/Docs-rea--ghidra--toolkit-0f88eb">
+    <img alt="GitMCP" src="https://img.shields.io/endpoint?url=https://gitmcp.io/badge/ethanhunt1981/rea-ghidra-toolkit">
   </a>
 </p>
 
