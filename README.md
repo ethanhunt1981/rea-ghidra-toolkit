@@ -111,6 +111,8 @@ python -m unittest discover -v
 
 This repository is designed to be used with <https://gitmcp.io/ethanhunt1981/rea-ghidra-toolkit>.
 
+It is also listed in the official [MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.ethanhunt1981/rea-ghidra-toolkit) as `io.github.ethanhunt1981/rea-ghidra-toolkit` (streamable HTTP via GitMCP; metadata in [`server.json`](server.json)).
+
 OpenCode / typical agent setup:
 
 ```jsonc

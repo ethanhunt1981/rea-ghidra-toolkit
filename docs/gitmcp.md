@@ -39,6 +39,17 @@ OpenCode watches configuration changes and reloads automatically. You do not nee
 
 GitMCP reads `llms.txt` first. Keep that file short and curated. Point it to the most useful docs and tools instead of duplicating their text.
 
+## Official MCP Registry listing
+
+The toolkit is registered in the official [MCP Registry](https://registry.modelcontextprotocol.io) as
+`io.github.ethanhunt1981/rea-ghidra-toolkit` version `1.0.0`, status `active`.
+
+- Metadata lives in [`server.json`](../server.json) at the repository root.
+- Remote transport: `streamable-http` at `https://gitmcp.io/ethanhunt1981/rea-ghidra-toolkit/mcp`.
+  (A live probe confirmed that `/mcp` serves the MCP handshake, while the legacy `/sse` path returns HTTP 405 — hence only streamable HTTP is registered.)
+- To publish an updated version: bump `version` in `server.json`, then run `mcp-publisher login github` and `mcp-publisher publish` from the repository root.
+- Several MCP server directories (for example Glama and mcp.directory) import registry entries; PulseMCP has paused direct submissions and points publishers to the registry.
+
 ## Privacy notes
 
 The server is public. Treat it accordingly:
