@@ -8,6 +8,9 @@
   <a href="https://gitmcp.io/ethanhunt1981/rea-ghidra-toolkit">
     <img alt="GitMCP docs" src="https://img.shields.io/endpoint?url=https://gitmcp.io/badge/ethanhunt1981/rea-ghidra-toolkit">
   </a>
+  <a href="https://glama.ai/mcp/connectors/io.github.ethanhunt1981/rea-ghidra-toolkit">
+    <img alt="Glama MCP connector" src="https://glama.ai/mcp/connectors/io.github.ethanhunt1981/rea-ghidra-toolkit/badges/score.svg">
+  </a>
   <a href="LICENSE">
     <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
   </a>

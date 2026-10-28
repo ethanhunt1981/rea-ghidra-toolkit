@@ -50,6 +50,15 @@ The toolkit is registered in the official [MCP Registry](https://registry.modelc
 - To publish an updated version: bump `version` in `server.json`, then run `mcp-publisher login github` and `mcp-publisher publish` from the repository root.
 - Several MCP server directories (for example Glama and mcp.directory) import registry entries; PulseMCP has paused direct submissions and points publishers to the registry.
 
+## Glama connector
+
+Glama imports the registry entry automatically and exposes a health/score badge:
+
+- Connector page: <https://glama.ai/mcp/connectors/io.github.ethanhunt1981/rea-ghidra-toolkit>
+- Badge (for README / awesome lists): `[![REA + Ghidra Toolkit MCP connector](https://glama.ai/mcp/connectors/io.github.ethanhunt1981/rea-ghidra-toolkit/badges/score.svg)](https://glama.ai/mcp/connectors/io.github.ethanhunt1981/rea-ghidra-toolkit)`
+
+When submitting to `punkpeye/awesome-remote-mcp-servers`, the bot requires this badge as the **second line** of the entry (after the title line). It is not auto-added.
+
 ## Privacy notes
 
 The server is public. Treat it accordingly:
