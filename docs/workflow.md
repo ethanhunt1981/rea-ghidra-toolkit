@@ -1,6 +1,6 @@
 # Evidence-oriented analysis workflow
 
-This workflow is for authorized static analysis. The concrete target and all target-derived data stay in the private analysis project.
+This workflow is for authorized static analysis, not malware triage. Keep the concrete target and all target-derived data in the private analysis project; do not commit completed logs or exports to this public toolkit.
 
 ## 1. Set the question and the scope
 
@@ -22,9 +22,10 @@ analysis/
   notes/
   evidence/
   exports/
-tools/
-handover.md
+  handover.md
 ```
+
+Keep this private workspace separate from the public toolkit repository.
 
 Record at least:
 
@@ -33,7 +34,7 @@ Record at least:
 - file type, architecture, and any useful compiler/runtime information
 - date, tool versions, and the exact scope
 
-For PE32 files:
+For PE32 files, the inventory helper reads the file without executing it. Its optional import view covers the standard import directory, not every PE import mechanism:
 
 ```powershell
 python -m tools.pe_inventory "C:\analysis\program.exe" --imports --json
@@ -120,6 +121,6 @@ Do not verify a parser only with the same assumptions that produced it. Look for
 - export useful evidence and update the private `handover.md`
 - close the REA binary session with `close_binary`
 - do not modify a provider-managed Ghidra database externally
-- only move general, cleaned, and legally safe knowledge into this public toolkit
+- move only general, cleaned, and legally safe knowledge into this public toolkit
 
 Use [`templates/handover.md`](../templates/handover.md) for the next session.

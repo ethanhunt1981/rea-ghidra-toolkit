@@ -78,8 +78,10 @@ First check `application.java.min` and the actual `java -version`. After install
 
 ### Imports are missing or appear partial
 
-- Bound imports, ordinal-only imports, forwarding entries, or packed sections can make the import table look different.
-- This tool reads only the standard directory and thunk forms. It does not replace a complete import-table reader.
+- The helper reads the standard import directory and PE32 thunk tables; it does not parse delay imports or every bound-import case. Ordinal imports are reported by ordinal.
+- Names must be NUL-terminated within their file-backed header or section range. A malformed or truncated table may be rejected rather than partially displayed.
+- Defensive count limits can reject unusually large import tables rather than return an incomplete inventory.
+- Forwarded exports are an export-table feature and are outside this helper's scope.
 - If the target is an installer package, inspect its members first rather than only the outer package.
 
 ### VMT scan produces no result

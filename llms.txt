@@ -4,7 +4,7 @@
 
 ## What this is for
 
-Native, unmanaged Windows binaries in PE32 format — with dedicated guidance for classic 32-bit Delphi (VMT / RTTI). Not for managed runtimes (.NET / Java), not for PE32+ 64-bit images, not for execution-based debugging or malware triage. Static analysis only; observation, inference, and unknown stay separated.
+Native, unmanaged Windows binaries in PE32 format — with dedicated guidance for classic 32-bit Delphi (VMT / RTTI). Not for managed runtimes (.NET / Java), PE32+ 64-bit images, execution-based debugging, or malware triage. Static analysis only; observation, inference, and unknown stay separated.
 
 ## Start here for agents
 
@@ -28,7 +28,7 @@ Native, unmanaged Windows binaries in PE32 format — with dedicated guidance fo
 - [PE32 inventory](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/tools/pe_inventory.py): hash, header, sections and optional imports.
 - [Delphi VMT](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/tools/delphi_vmt.py): individual candidate or heuristic scan; all hits remain unverified until the disassembler supports them.
 - [PE32 kernel](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/tools/pe32.py): read-only RVA/VA mapping and basic PE32 parsing.
-- [Ghidra export](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/ghidra/scripts/ExportDecompilation.java): one UTF-8 file with non-external function names, entry points, signatures, and decompiled C.
+- [Ghidra export](https://github.com/ethanhunt1981/rea-ghidra-toolkit/blob/main/ghidra/scripts/ExportDecompilation.java): a UTF-8 export of non-external functions; the destination is replaced only after a completed run.
 
 ## Templates for private projects
 

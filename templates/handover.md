@@ -1,5 +1,7 @@
 # Handover
 
+> Keep completed copies in the private analysis workspace. Do not commit target details, hashes, evidence, or decompiled output to this repository.
+
 ## Target and context
 
 - File:
@@ -8,13 +10,13 @@
 - Analysis ID:
 - Date:
 
-## Verified findings
+## Confirmed observations
 
-- [ ] `<confirmed observation>`
+- [ ] `<directly verifiable observation; cite private evidence>`
 
-## Plausible, not yet-proven findings
+## Plausible inferences
 
-- [ ] `<hypothesis>`
+- [ ] `<hypothesis and supporting observations; state what remains unproven>`
 
 ## Open questions
 

@@ -41,23 +41,19 @@ GitMCP reads `llms.txt` first. Keep that file short and curated. Point it to the
 
 ## Official MCP Registry listing
 
-The toolkit is registered in the official [MCP Registry](https://registry.modelcontextprotocol.io) as
-`io.github.ethanhunt1981/rea-ghidra-toolkit` version `1.0.0`, status `active`.
+The server is listed in the official [MCP Registry](https://registry.modelcontextprotocol.io) as
+`io.github.ethanhunt1981/rea-ghidra-toolkit`. The local [`server.json`](../server.json) records the intended metadata and version; compare it with the registry when publishing an update.
 
 - Metadata lives in [`server.json`](../server.json) at the repository root.
-- Remote transport: `streamable-http` at `https://gitmcp.io/ethanhunt1981/rea-ghidra-toolkit/mcp`.
-  (A live probe confirmed that `/mcp` serves the MCP handshake, while the legacy `/sse` path returns HTTP 405 — hence only streamable HTTP is registered.)
+- The registered remote transport is `streamable-http` at `https://gitmcp.io/ethanhunt1981/rea-ghidra-toolkit/mcp`.
 - To publish an updated version: bump `version` in `server.json`, then run `mcp-publisher login github` and `mcp-publisher publish` from the repository root.
-- Several MCP server directories (for example Glama and mcp.directory) import registry entries; PulseMCP has paused direct submissions and points publishers to the registry.
 
 ## Glama connector
 
-Glama imports the registry entry automatically and exposes a health/score badge:
+The connector page and score badge are available at:
 
 - Connector page: <https://glama.ai/mcp/connectors/io.github.ethanhunt1981/rea-ghidra-toolkit>
 - Badge (for README / awesome lists): `[![REA + Ghidra Toolkit MCP connector](https://glama.ai/mcp/connectors/io.github.ethanhunt1981/rea-ghidra-toolkit/badges/score.svg)](https://glama.ai/mcp/connectors/io.github.ethanhunt1981/rea-ghidra-toolkit)`
-
-When submitting to `punkpeye/awesome-remote-mcp-servers`, the bot requires this badge as the **second line** of the entry (after the title line). It is not auto-added.
 
 ## Privacy notes
 

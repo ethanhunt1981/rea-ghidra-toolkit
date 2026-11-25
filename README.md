@@ -40,9 +40,9 @@ The toolkit is aimed at **native, unmanaged PE32 binaries on Windows**:
 
 - classic **32-bit Delphi applications** have dedicated guidance ([VMT / RTTI](docs/delphi-pe32.md));
 - other PE32 code (e.g. C/C++ components) works with the [read-only inventory](tools/pe_inventory.py) and the [headless Ghidra export](docs/rea-ghidra.md);
-- analysis is [static only](docs/workflow.md#1-set-the-question-and-the-scope); every claim is verified before it is treated as a finding.
+- the workflow is [authorized and static](docs/workflow.md#1-set-the-question-and-the-scope); observations, inferences, and unknowns remain distinct.
 
-**Not a fit for** managed runtimes (.NET / Java), PE32+ 64-bit images (the quick parser is deliberately PE32-only), executing code as a debugging workflow, or any target without solid legal authorization.
+**Not a fit for** managed runtimes (.NET / Java), PE32+ 64-bit images (the quick parser is deliberately PE32-only), execution-based debugging, or malware triage. Use it only when you have clear authorization for the analysis.
 
 ## Why this exists
 
@@ -77,18 +77,20 @@ You want to avoid rebuilding the same reverse-engineering workflow from scratch 
 ├── assets/
 ├── AGENTS.md
 ├── LICENSE
-└── llms.txt
+├── llms.txt
+└── server.json
 ```
 
 ## What you get
 
 | Area | What is inside | Good next read |
 |---|---|---|
-| 🧭 `docs/` | Evidence-oriented, reproducible workflows and validation rules | [`workflow.md`](docs/workflow.md) |
+| 🧭 `docs/` | Evidence-oriented workflows, tool guidance, and troubleshooting | [`workflow.md`](docs/workflow.md), [`evidence.md`](docs/evidence.md), [`REA + Ghidra`](docs/rea-ghidra.md), [`Delphi PE32`](docs/delphi-pe32.md), [`troubleshooting`](docs/troubleshooting.md), [`GitMCP`](docs/gitmcp.md) |
 | 🩺 `tools/` | Read-only PE32 inventory and VMT helpers | [`tools/pe_inventory.py`](tools/pe_inventory.py) |
 | 🧰 `ghidra/` | Headless export helper | [`ExportDecompilation.java`](ghidra/scripts/ExportDecompilation.java) |
 | 🫙 `templates/` | Private analysis and handover templates | [`templates/analysis-log.md`](templates/analysis-log.md) |
 | 🧪 `tests/` | Synthetic, dependency-light tests | [`tests/test_pe32.py`](tests/test_pe32.py) |
+| 🔌 `server.json` | Public MCP Registry metadata | [`docs/gitmcp.md`](docs/gitmcp.md) |
 
 ## Quickstart
 
@@ -108,6 +110,7 @@ Run the synthetic test suite:
 
 ```powershell
 python -m unittest discover -v
+python -m compileall -q tools tests
 ```
 
 ## GitMCP
@@ -139,15 +142,9 @@ opencode mcp add rea-ghidra-toolkit --global --url https://gitmcp.io/ethanhunt19
 opencode mcp list
 ```
 
-<p align="center">
-  <a href="https://gitmcp.io/ethanhunt1981/rea-ghidra-toolkit">
-    <img alt="GitMCP" src="https://img.shields.io/endpoint?url=https://gitmcp.io/badge/ethanhunt1981/rea-ghidra-toolkit">
-  </a>
-</p>
-
 ## Core rule
 
-> **Observation, inference, and unknown are three different things.** A plausible name, string, or VMT candidate is not yet a behavioral proof. The templates are here to keep that distinction visible across sessions.
+> **Observation, inference, and unknown are different things.** A plausible name, string, or VMT candidate is not proof of runtime behavior. The templates keep those distinctions visible across sessions.
 
 ## License
 

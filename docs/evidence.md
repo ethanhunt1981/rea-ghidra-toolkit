@@ -2,6 +2,8 @@
 
 Reverse-engineering results are only reusable if the difference between what was observed and what was inferred stays visible.
 
+Keep completed logs, evidence exports, target hashes, and target-derived text in the private analysis project. The templates in this repository are blank starting points, not places to publish findings.
+
 ## Keep claim levels separate
 
 | Claim type | Meaning | Example |
@@ -14,7 +16,7 @@ Avoid broad phrasing such as “the app does X” when the statement comes only 
 
 ## Private analysis log entries
 
-Use the same structure for each finding:
+Use the same structure for each finding. Cite evidence for observations and label conclusions as inferences unless independently verified:
 
 | Field | Meaning |
 |---|---|

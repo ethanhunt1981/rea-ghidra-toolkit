@@ -2,9 +2,12 @@
 // Usage: ExportDecompilation.java <output-file> [timeout-seconds]
 
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 import ghidra.app.decompiler.DecompInterface;
 import ghidra.app.decompiler.DecompileResults;
@@ -27,8 +30,15 @@ public class ExportDecompilation extends GhidraScript {
         }
 
         Path output = Path.of(args[0]).toAbsolutePath();
-        Files.createDirectories(output.getParent());
+        Path outputDirectory = output.getParent();
+        Files.createDirectories(outputDirectory);
+        String temporaryPrefix = output.getFileName().toString();
+        while (temporaryPrefix.length() < 3) {
+            temporaryPrefix += "_";
+        }
+
         DecompInterface decompiler = new DecompInterface();
+        Path temporaryOutput = null;
         int exported = 0;
         int failed = 0;
 
@@ -37,12 +47,15 @@ public class ExportDecompilation extends GhidraScript {
                 throw new IllegalStateException("Could not initialize the decompiler");
             }
 
-            try (BufferedWriter writer = Files.newBufferedWriter(output, StandardCharsets.UTF_8)) {
+            temporaryOutput = Files.createTempFile(outputDirectory, temporaryPrefix, ".tmp");
+            boolean cancelled = false;
+            try (BufferedWriter writer = Files.newBufferedWriter(temporaryOutput, StandardCharsets.UTF_8)) {
                 writer.write("/* Program: " + oneLine(currentProgram.getName()) + " */\n");
                 writer.write("/* Image base: " + currentProgram.getImageBase() + " */\n");
 
                 for (Function function : currentProgram.getFunctionManager().getFunctions(true)) {
                     if (monitor.isCancelled()) {
+                        cancelled = true;
                         break;
                     }
                     if (function.isExternal()) {
@@ -65,9 +78,29 @@ public class ExportDecompilation extends GhidraScript {
                     }
                 }
             }
+
+            if (cancelled || monitor.isCancelled()) {
+                throw new IOException("Export cancelled; existing output was preserved");
+            }
+
+            try {
+                Files.move(
+                    temporaryOutput,
+                    output,
+                    StandardCopyOption.ATOMIC_MOVE,
+                    StandardCopyOption.REPLACE_EXISTING
+                );
+            }
+            catch (AtomicMoveNotSupportedException exception) {
+                Files.move(temporaryOutput, output, StandardCopyOption.REPLACE_EXISTING);
+            }
+            temporaryOutput = null;
         }
         finally {
             decompiler.dispose();
+            if (temporaryOutput != null) {
+                Files.deleteIfExists(temporaryOutput);
+            }
         }
 
         println("Exported " + exported + " functions to " + output + "; failures: " + failed);

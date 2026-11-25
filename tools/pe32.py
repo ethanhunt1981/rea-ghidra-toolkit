@@ -156,8 +156,23 @@ class PE32:
         return struct.unpack("<I", self.read_va(va, 4))[0]
 
     def c_string_rva(self, rva: int, max_length: int = 260) -> str:
+        if max_length < 1:
+            raise PEFormatError("invalid maximum string length")
+
         offset = self.rva_to_offset(rva)
-        end = self.data.find(b"\0", offset, min(offset + max_length, len(self.data)))
+        if rva < self.size_of_headers and rva + 1 <= min(self.size_of_headers, len(self.data)):
+            available = min(self.size_of_headers, len(self.data)) - rva
+        else:
+            section = next((item for item in self.sections if item.contains_rva(rva)), None)
+            if section is None:
+                raise PEFormatError(f"RVA 0x{rva:x} is not mapped by this image")
+            available = section.raw_size - (rva - section.virtual_address)
+
+        end = self.data.find(
+            b"\0",
+            offset,
+            offset + min(max_length, available),
+        )
         if end < 0:
             raise PEFormatError(f"unterminated string at RVA 0x{rva:x}")
         return self.data[offset:end].decode("ascii", errors="replace")
@@ -169,37 +184,56 @@ class PE32:
         self._check_range(offset, 8)
         return struct.unpack_from("<II", self.data, offset)
 
-    def imports(self, max_libraries: int = 4096, max_functions: int = 65536) -> list[dict]:
-        """Return imported DLLs and functions without resolving them."""
-        directory_rva, _ = self.data_directory(1)
+    def imports(
+        self,
+        max_libraries: int = 4096,
+        max_functions: int = 65536,
+        max_total_functions: int = 100_000,
+    ) -> list[dict]:
+        """Return imports without resolving them, subject to defensive count limits."""
+        if max_libraries < 1 or max_functions < 1 or max_total_functions < 1:
+            raise PEFormatError("import limits must be positive")
+
+        directory_rva, directory_size = self.data_directory(1)
         if directory_rva == 0:
             return []
+        if directory_size < 20:
+            raise PEFormatError("import directory is too small for a descriptor")
 
         libraries = []
-        for index in range(max_libraries):
-            descriptor = self.read_rva(directory_rva + index * 20, 20)
+        total_functions = 0
+        for index in range(max_libraries + 1):
+            descriptor_offset = index * 20
+            if descriptor_offset + 20 > directory_size:
+                raise PEFormatError("unterminated import descriptor table within declared directory")
+            descriptor = self.read_rva(directory_rva + descriptor_offset, 20)
             original_first_thunk, _, _, name_rva, first_thunk = struct.unpack("<IIIII", descriptor)
             if not any(descriptor):
                 return libraries
+            if index == max_libraries:
+                raise PEFormatError("import descriptor table exceeds library limit")
             if name_rva == 0:
                 raise PEFormatError("import descriptor has no DLL name")
 
             functions = []
             thunk_rva = original_first_thunk or first_thunk
             if thunk_rva:
-                for thunk_index in range(max_functions):
+                for thunk_index in range(max_functions + 1):
                     thunk = self.u32_rva(thunk_rva + thunk_index * 4)
                     if thunk == 0:
                         break
+                    if thunk_index == max_functions:
+                        raise PEFormatError("import thunk table exceeds per-library function limit")
+                    if total_functions >= max_total_functions:
+                        raise PEFormatError("import function count exceeds total limit")
                     if thunk & 0x80000000:
                         functions.append({"ordinal": thunk & 0xFFFF})
                     else:
                         functions.append({"name": self.c_string_rva((thunk & 0x7FFFFFFF) + 2)})
-                else:
-                    raise PEFormatError("unterminated import thunk table")
+                    total_functions += 1
 
             libraries.append({"dll": self.c_string_rva(name_rva), "functions": functions})
-        raise PEFormatError("unterminated import descriptor table")
+        raise PEFormatError("import descriptor table exceeds library limit")
 
     def section_for_rva(self, rva: int) -> Section | None:
         return next((section for section in self.sections if section.contains_rva(rva)), None)

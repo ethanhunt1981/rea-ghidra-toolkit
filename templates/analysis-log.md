@@ -1,10 +1,20 @@
 # Analysis log
 
+> Keep completed copies in the private analysis workspace. Do not commit target details, hashes, evidence, or decompiled output to this repository.
+
+## Target and scope
+
+- Artifact:
+- SHA-256:
+- Format / architecture:
+- Authorization and scope:
+- Date:
+
 ## Findings
 
 | ID | Address / offset | Observation | Hypothesis | Status | Evidence | Next check |
 |---|---|---|---|---|---|---|
-| F001 | `<RVA/VA/offset>` | `<directly verifiable>` | `<plausible conclusion>` | `confirmed / plausible / unresolved` | `<evidence ID or export path>` | `<what is still missing>` |
+| F001 | `<RVA / VA / file offset>` | `<directly verifiable observation>` | `<inference or hypothesis>` | `confirmed / plausible / unresolved` | `<private evidence ID or path>` | `<what remains to verify>` |
 
 ## Open questions
 

@@ -81,6 +81,8 @@ Do not trust the folder name of a Ghidra installation. The `application.properti
 
 The optional `60` is the decompiler timeout in seconds per function.
 
+The exporter writes to a temporary file beside the destination and replaces the destination only after the run completes. Cancellation or an error before replacement preserves any previous export. Individual function decompilation failures are recorded in the completed export and counted in the final summary.
+
 ### Re-open an already analyzed project
 
 ```powershell

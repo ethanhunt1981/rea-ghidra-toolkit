@@ -12,7 +12,7 @@ Static PE tools need three distinct address kinds:
 
 A section defines how file bytes map to RVAs. Not every virtual range corresponds to file bytes; zero-filled areas cannot be read from the file.
 
-The included parser hides that translation for you:
+The included parser performs that translation for you:
 
 ```python
 from tools.pe32 import PE32
@@ -62,7 +62,7 @@ Even a successful output contains `"verified": false`. That is intentional. Stru
 python -m tools.delphi_vmt "C:\analysis\program.exe" --scan
 ```
 
-By default, only candidates whose first method pointer points into an executable section are returned. To include weaker candidates:
+By default, only candidates whose first method pointer points into an executable section are returned. This is a heuristic filter, not proof that the address is a valid method. To include weaker candidates:
 
 ```powershell
 python -m tools.delphi_vmt "C:\analysis\program.exe" --scan --include-unverified

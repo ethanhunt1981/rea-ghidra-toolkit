@@ -18,6 +18,7 @@ Use only generated data for tests. Keep examples neutral and avoid implying a sp
 
 - Prefer small, read-only Python tools using only the standard library.
 - Link new documentation from `README.md` and `llms.txt`; keep `llms.txt` short, because it is the main GitMCP entry point.
+- Keep Markdown examples generic, verify relative links, and keep target-derived information out of public docs.
 - Do not claim a universal REA / Ghidra / JDK version compatibility. Record version-specific guidance with a date and source, or describe a dynamic check instead.
 - Clearly separate observations, heuristics, and verified claims.
 - Do not commit generated Ghidra projects or decompilation output.
